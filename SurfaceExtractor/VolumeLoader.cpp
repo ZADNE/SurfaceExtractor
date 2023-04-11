@@ -27,18 +27,19 @@ constexpr auto VOLUME_DIMS = std::to_array<glm::uvec3>({
 static_assert(VOLUME_NAMES.size() == VOLUME_DIMS.size());
 
 
-Volume VolumeLoader::load(const std::string& name) {
+Volume VolumeLoader::load(const std::string& filename) {
     //Select file to load
-    std::string volName = VOLUME_NAMES[0];
-    Volume vol{
-        .dims = VOLUME_DIMS[0]
-    };
-    for (size_t i = 1; i < VOLUME_NAMES.size(); i++) {
-        if (name == VOLUME_NAMES[i]) {
+    std::string volName;
+    Volume vol;
+    for (size_t i = 0; i < VOLUME_NAMES.size(); i++) {
+        if (filename == VOLUME_NAMES[i]) {
             volName = VOLUME_NAMES[i];
             vol.dims = VOLUME_DIMS[i];
             break;
         }
+    }
+    if (volName == "") {
+        throw std::exception{"Unknown input filename"};
     }
 
     //Load the volume

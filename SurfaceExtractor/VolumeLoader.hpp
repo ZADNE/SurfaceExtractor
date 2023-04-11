@@ -16,7 +16,7 @@ struct Volume {
 
 class VolumeLoader {
 public:
-    static Volume load(const std::string& name);
+    static Volume load(const std::string& filename);
 };
 
 }
