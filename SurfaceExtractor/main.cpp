@@ -5,6 +5,7 @@
 
 #include <SurfaceExtractor/VolumeLoader.hpp>
 #include <SurfaceExtractor/ObjExporter.hpp>
+#include <SurfaceExtractor/MarchingCubesExtractor.hpp>
 
 namespace SurfaceExtractor {
 
@@ -58,7 +59,7 @@ int main(int argc, char* argv[]) {
         std::vector<glm::uvec3> triangles;
         switch (algorithm) {
         case ExtractionAlgorithm::MARCHING_CUBES:
-            /* Magic goes here... */
+            MarchingCubesExtractor::extractSurface(volume, vertices, triangles);
             break;
         case ExtractionAlgorithm::FLYING_EDGES:
             /* Magic goes here... */
