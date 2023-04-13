@@ -3,7 +3,12 @@
  */
 #include <SurfaceExtractor/MarchingCubesExtractor.hpp>
 
+#include <glm/common.hpp>
+
 namespace SurfaceExtractor {
+
+constexpr float ONE_OVER_255 = 1.0f / 255.0f;
+constexpr float THRESHOLD = 0.0f / 255.0f;
 
 void MarchingCubesExtractor::extractSurface(
     const Volume& vol,
@@ -12,8 +17,8 @@ void MarchingCubesExtractor::extractSurface(
 ) {
     vertices.reserve(4096);
     triangles.reserve(4096);
-    unsigned int zs = vol.dims.x * vol.dims.y;  //z-stride
-    unsigned int ys = vol.dims.y;               //y-stride
+    unsigned int zs = vol.dims.x * vol.dims.y;                  //z-stride
+    unsigned int ys = vol.dims.y;                               //y-stride
 
     //For the whole volume
     for (unsigned int z = 0u; z < (vol.dims.z - 1u); ++z) {
@@ -22,17 +27,72 @@ void MarchingCubesExtractor::extractSurface(
             unsigned int yzo = zo + ys * y;
             for (unsigned int x = 0u; x < (vol.dims.x - 1u); ++x) {
                 unsigned int xyzo = yzo + x;
-                //Compute index to table
+                std::array<float, 8u> corners;
                 unsigned int index = 0u;
-                for (unsigned int i = 0u; i < 8u; ++i) {
-                    unsigned int offset =
-                        xyzo + (i & 1u) + ((i >> 1u) & 1u) * ys + ((i >> 2u) & 1u) * zs;
-                    index |= (vol.data[offset] > 127u) ? (1u << i) : 0u;
+                for (unsigned int i = 0u; i < 8u; ++i) {        //Analyze corners of the cube
+                    uint8_t corner =
+                        vol.data[xyzo + (i & 1u) + ((i >> 1u) & 1u) * ys + ((i >> 2u) & 1u) * zs];
+                    float val = static_cast<float>(corner) * ONE_OVER_255;
+                    index |= static_cast<unsigned int>(val > THRESHOLD) << i;
+                    corners[i] = val;
+                }
+                if (index == 0u || index == 255u) {             //If cube is entirely inside or outside of the volume
+                    continue;                                   //Quit because there is no surface to create
+                }
+
+                std::array<glm::vec3, 12u> edgeCenters;
+                for (unsigned int i = 0u; i < 12u; ++i) {       //Interpolate centers of edges
+                    unsigned int index0 = i & 0x7u;
+                    unsigned int index1 = ADJACENT_VERTEX_INDICES[i];
+                    float corner0 = corners[index0];
+                    float corner1 = corners[index1];
+                    float interp = 0.5f;//(THRESHOLD - corner0) / (corner1 - corner0);
+                    glm::vec3 vertex0 = VERTEX_OFFSETS[index0];
+                    glm::vec3 vertex1 = VERTEX_OFFSETS[index1];
+                    edgeCenters[i] =
+                        glm::vec3{x, y, z} + glm::mix(vertex0, vertex1, interp);
+                }
+
+                const int* edgeIndices = INDEX_TABLE[index];
+                for (unsigned int i = 0u; i < 15u; i++) {
+                    if (edgeIndices[i] == -1) {
+                        break;
+                    }
+                    unsigned int firstIndex = static_cast<unsigned int>(vertices.size());
+                    vertices.emplace_back(edgeCenters[edgeIndices[i]]);
+                    vertices.emplace_back(edgeCenters[edgeIndices[++i]]);
+                    vertices.emplace_back(edgeCenters[edgeIndices[++i]]);
+                    triangles.emplace_back(firstIndex, firstIndex + 1u, firstIndex + 2u);
                 }
             }
         }
     }
 }
+
+void MarchingCubesExtractor::generateTriangles(
+    const std::array<float, 8>& corners,
+    unsigned int index,
+    std::vector<glm::vec3>& vertices,
+    std::vector<glm::uvec3>& triangles
+) {
+
+}
+
+const int MarchingCubesExtractor::ADJACENT_VERTEX_INDICES[12] = {
+    1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7
+};
+
+
+const glm::vec3 MarchingCubesExtractor::VERTEX_OFFSETS[8] = {
+    {0.0f, 0.0f, 0.0f},
+    {1.0f, 0.0f, 0.0f},
+    {0.0f, 1.0f, 0.0f},
+    {1.0f, 1.0f, 0.0f},
+    {0.0f, 0.0f, 1.0f},
+    {1.0f, 0.0f, 1.0f},
+    {0.0f, 1.0f, 1.0f},
+    {1.0f, 1.0f, 1.0f}
+};
 
 const int MarchingCubesExtractor::INDEX_TABLE[256][16] = {
     {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
