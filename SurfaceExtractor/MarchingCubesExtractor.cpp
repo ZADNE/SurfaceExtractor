@@ -8,7 +8,7 @@
 namespace SurfaceExtractor {
 
 constexpr float ONE_OVER_255 = 1.0f / 255.0f;
-constexpr float THRESHOLD = 0.0f / 255.0f;
+constexpr float THRESHOLD = 31.0f / 255.0f;
 
 void MarchingCubesExtractor::extractSurface(
     const Volume& vol,
@@ -30,8 +30,13 @@ void MarchingCubesExtractor::extractSurface(
                 std::array<float, 8u> corners;
                 unsigned int index = 0u;
                 for (unsigned int i = 0u; i < 8u; ++i) {        //Analyze corners of the cube
+                    glm::uvec3 offset{
+                        (((i + 1) >> 1u) & 1u),
+                        ((i >> 1u) & 1u),
+                        ((i >> 2u) & 1u)
+                    };
                     uint8_t corner =
-                        vol.data[xyzo + (i & 1u) + ((i >> 1u) & 1u) * ys + ((i >> 2u) & 1u) * zs];
+                        vol.data[xyzo + offset.x + offset.y * ys + offset.z * zs];
                     float val = static_cast<float>(corner) * ONE_OVER_255;
                     index |= static_cast<unsigned int>(val > THRESHOLD) << i;
                     corners[i] = val;
@@ -46,7 +51,7 @@ void MarchingCubesExtractor::extractSurface(
                     unsigned int index1 = ADJACENT_VERTEX_INDICES[i];
                     float corner0 = corners[index0];
                     float corner1 = corners[index1];
-                    float interp = 0.5f;//(THRESHOLD - corner0) / (corner1 - corner0);
+                    float interp = (THRESHOLD - corner0) / (corner1 - corner0);
                     glm::vec3 vertex0 = VERTEX_OFFSETS[index0];
                     glm::vec3 vertex1 = VERTEX_OFFSETS[index1];
                     edgeCenters[i] =
@@ -69,29 +74,19 @@ void MarchingCubesExtractor::extractSurface(
     }
 }
 
-void MarchingCubesExtractor::generateTriangles(
-    const std::array<float, 8>& corners,
-    unsigned int index,
-    std::vector<glm::vec3>& vertices,
-    std::vector<glm::uvec3>& triangles
-) {
-
-}
-
 const int MarchingCubesExtractor::ADJACENT_VERTEX_INDICES[12] = {
     1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7
 };
 
-
 const glm::vec3 MarchingCubesExtractor::VERTEX_OFFSETS[8] = {
     {0.0f, 0.0f, 0.0f},
     {1.0f, 0.0f, 0.0f},
-    {0.0f, 1.0f, 0.0f},
     {1.0f, 1.0f, 0.0f},
+    {0.0f, 1.0f, 0.0f},
     {0.0f, 0.0f, 1.0f},
     {1.0f, 0.0f, 1.0f},
-    {0.0f, 1.0f, 1.0f},
-    {1.0f, 1.0f, 1.0f}
+    {1.0f, 1.0f, 1.0f},
+    {0.0f, 1.0f, 1.0f}
 };
 
 const int MarchingCubesExtractor::INDEX_TABLE[256][16] = {
