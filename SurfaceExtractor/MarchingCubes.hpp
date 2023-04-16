@@ -2,14 +2,11 @@
  *  @author    Dubsky Tomas
  */
 #pragma once
-#include <string>
-#include <array>
-
 #include <SurfaceExtractor/Volume.hpp>
 
 namespace SurfaceExtractor {
 
-class MarchingCubesExtractor {
+class MarchingCubes {
 public:
     static void extractSurface(
         const Volume& vol,
@@ -17,10 +14,9 @@ public:
         std::vector<glm::uvec3>& triangles
     );
 private:
-
-    static const int ADJACENT_VERTEX_INDICES[12];
-    static const glm::vec3 VERTEX_OFFSETS[8];
-    static const int INDEX_TABLE[256][16];
+    static const int k_adjacentVertexIndices[12];
+    static const glm::vec3 k_vertexOffsets[8];
+    static const int k_indexTable[256][16];
 };
 
 }

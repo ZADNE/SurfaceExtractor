@@ -8,7 +8,7 @@
 
 namespace SurfaceExtractor {
 
-constexpr auto VOLUME_NAMES = std::to_array<const char*>({
+constexpr auto k_volumeNames = std::to_array<const char*>({
     "foot.raw",
     "bonsai.raw",
     "teapot.raw",
@@ -16,7 +16,7 @@ constexpr auto VOLUME_NAMES = std::to_array<const char*>({
     "manix.raw",
     "tooth.raw"
 });
-constexpr auto VOLUME_DIMS = std::to_array<glm::uvec3>({
+constexpr auto k_volumeDims = std::to_array<glm::uvec3>({
     {256u, 256u, 256u},
     {256u, 256u, 256u},
     {256u, 256u, 178u},
@@ -24,17 +24,17 @@ constexpr auto VOLUME_DIMS = std::to_array<glm::uvec3>({
     {128u, 128u, 115u},
     {256u, 256u, 151u}
 });
-static_assert(VOLUME_NAMES.size() == VOLUME_DIMS.size());
+static_assert(k_volumeNames.size() == k_volumeDims.size());
 
 
 Volume VolumeLoader::load(const std::string& filename) {
     //Select file to load
     std::string volName;
     Volume vol;
-    for (size_t i = 0; i < VOLUME_NAMES.size(); i++) {
-        if (filename == VOLUME_NAMES[i]) {
-            volName = VOLUME_NAMES[i];
-            vol.dims = VOLUME_DIMS[i];
+    for (size_t i = 0; i < k_volumeNames.size(); i++) {
+        if (filename == k_volumeNames[i]) {
+            volName = k_volumeNames[i];
+            vol.dims = k_volumeDims[i];
             break;
         }
     }
