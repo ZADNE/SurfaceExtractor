@@ -44,7 +44,7 @@ void MarchingCubes::extractSurface(
                     corners[i] = val;
                 }
                 if (index == 0u || index == 255u) {             //If cube is entirely inside or outside of the volume
-                    continue;                                   //Quit because there is no surface to create
+                    continue;                                   //Skip this cube because there is no surface to create
                 }
 
                 std::array<glm::vec3, 12u> edgeCenters;
