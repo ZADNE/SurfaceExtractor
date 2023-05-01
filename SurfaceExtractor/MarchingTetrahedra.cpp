@@ -8,13 +8,16 @@
 namespace SurfaceExtractor {
 
 constexpr float k_1over255 = 1.0f / 255.0f;
-constexpr float k_threshold = 31.0f / 255.0f;
+
+float MarchingTetrahedra::k_threshold = 31.0f / 255.0f;
 
 void MarchingTetrahedra::extractSurface(
     const Volume& vol,
     std::vector<glm::vec3>& vertices,
-    std::vector<glm::uvec3>& triangles
+    std::vector<glm::uvec3>& triangles,
+    float isovalue
 ) {
+    k_threshold = isovalue;
     vertices.reserve(4096 * 3);
     triangles.reserve(4096);
     unsigned int zs = vol.dims.x * vol.dims.y;                  //z-stride

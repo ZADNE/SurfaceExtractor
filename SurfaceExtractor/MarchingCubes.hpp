@@ -11,8 +11,11 @@ public:
     static void extractSurface(
         const Volume& vol,
         std::vector<glm::vec3>& vertices,
-        std::vector<glm::uvec3>& triangles
+        std::vector<glm::uvec3>& triangles,
+        float isovalue = 0.121f
     );
+    
+    static float k_threshold;
 private:
     static const int k_adjacentVertexIndices[12];
     static const glm::vec3 k_vertexOffsets[8];

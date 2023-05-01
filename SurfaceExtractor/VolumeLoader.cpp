@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <array>
+#include <stdexcept>
 
 namespace SurfaceExtractor {
 
@@ -39,14 +40,14 @@ Volume VolumeLoader::load(const std::string& filename) {
         }
     }
     if (volName == "") {
-        throw std::exception{"Unknown input filename"};
+        throw std::runtime_error{"Unknown input filename"};
     }
 
     //Load the volume
     std::ifstream file{volName, std::ios::binary | std::ios::ate};
     std::streamsize size = file.tellg();
     if (size < (vol.dims.x * vol.dims.y * vol.dims.z)) {
-        throw std::exception{"Input file is smaller than expected"};
+        throw std::runtime_error{"Input file is smaller than expected"};
     }
     file.seekg(0, std::ios::beg);
     vol.data.resize(size);
