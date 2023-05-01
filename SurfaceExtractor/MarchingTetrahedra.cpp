@@ -108,7 +108,7 @@ const glm::vec3 MarchingTetrahedra::k_vertexOffsets[8] = {
     {0.0f, 1.0f, 1.0f}
 };
 
-const int MarchingTetrahedra::k_indexTable[16][8] = {
+const int MarchingTetrahedra::k_indexTable[16][8] = {           //Table extracted from http://paulbourke.net/geometry/polygonise/source1.c
     {-1, -1, -1, -1, -1, -1, -1, -1},
     { 0,  1,  0,  2,  0,  3, -1, -1},
     { 1,  0,  1,  3,  1,  2, -1, -1},
