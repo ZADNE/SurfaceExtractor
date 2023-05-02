@@ -94,7 +94,7 @@ const glm::vec3 MarchingCubes::k_vertexOffsets[8] = {
     {0.0f, 1.0f, 1.0f}
 };
 
-const int MarchingCubes::k_indexTable[256][16] = {
+const int MarchingCubes::k_indexTable[256][16] = {              //Table taken from http://paulbourke.net/geometry/polygonise/
     {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
     { 0,  8,  3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
     { 0,  1,  9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
