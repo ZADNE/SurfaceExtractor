@@ -1,3 +1,17 @@
+/*!
+ *  @author Burkalo Boris (xburka00)
+ */
+
+/*
+* Code in this file is inspired by code in this repository:
+* https://github.com/sandialabs/miniIsosurface/tree/master/flyingEdges
+*
+* Algorithm in this file is based on method from Schroeder et al. introduced
+* in the following article:
+* https://ieeexplore.ieee.org/document/7348069
+*/
+
+
 #pragma once
 #include <SurfaceExtractor/Volume.hpp>
 #include <array>
@@ -10,16 +24,29 @@ struct Edge
     int xL;
     int xR;
 
-    int xIntersects;
-    int yIntersects;
-    int zIntersects;
+    unsigned xIntersects;
+    unsigned yIntersects;
+    unsigned zIntersects;
+};
+
+struct EvalEdge
+{
+    EvalEdge(unsigned eAC, unsigned& ec, int cond, int idd, bool ic) 
+    : edgeAxisCnt(eAC), extraCnt(ec), condition(cond),
+    id(idd), increment(ic)
+    {}
+
+    unsigned edgeAxisCnt;
+    unsigned& extraCnt;
+    int condition;
+    int id;
+    bool increment;
 };
 
 class FlyingEdges
 {
 
 public:
-
     static void extractSurface(
         const Volume& vol,
         std::vector<glm::vec3>& vertices,
@@ -28,6 +55,8 @@ public:
     );
 
     static float m_isovalue;
+    static float m_spacing;
+
 private:
     static void pass1(const Volume& volume, std::vector<uint8_t>& edgeCases,
         std::vector<Edge>& edges);

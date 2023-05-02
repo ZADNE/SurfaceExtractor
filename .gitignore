@@ -1,6 +1,8 @@
 doc/
 imgui.ini
 
+*results/*
+
 CMakeSettings.json
 
 ##### Windows

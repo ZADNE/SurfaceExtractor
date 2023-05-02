@@ -1,3 +1,13 @@
+/*!
+ *  @author Burkalo Boris (xburka00)
+ */
+
+/*
+* Code in this file is inspired by code in this repository:
+* https://github.com/sandialabs/miniIsosurface/tree/master/flyingEdges
+*
+*/
+
 #include <iostream>
 
 namespace config
