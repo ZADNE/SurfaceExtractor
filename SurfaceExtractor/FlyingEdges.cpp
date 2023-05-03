@@ -18,7 +18,6 @@
 #include <iostream>
 #include <cmath>
 #include <limits>
-#include "FlyingEdges.hpp"
 
 namespace SurfaceExtractor
 {
@@ -58,9 +57,6 @@ void FlyingEdges::extractSurface(const Volume& vol,
 
     pass4(vol, edges, triangleCount, cubeCases, vertices, triangles);
     //
-
-    std::cout << verticesTot << std::endl;
-    std::cout << trianglesTot << std::endl;
 }
 
 void FlyingEdges::pass1(const Volume& volume, std::vector<uint8_t>& edgeCases, std::vector<Edge>& edges)
